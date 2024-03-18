@@ -12,8 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: compare versions
         run: |
-          export REMOTEVERSION=$(wget -qO- https://api.github.com/repos/songquanpeng/one-api/tags | gawk -F '["v]' '/name/{print "v"$5;exit}')
-          export LOCALVERSION=$(curl --location --silent --fail --show-error "https://api.github.com/repos/k0baya/one-api-freebsd/releases/latest" | grep -oP '"tag_name":\s*"\K[^"]+')
+          export REMOTEVERSION=$(wget -qO- https://api.github.com/repos/Calcium-Ion/new-api/tags | gawk -F '["v]' '/name/{print "v"$5;exit}')
+          export LOCALVERSION=$(curl --location --silent --fail --show-error "https://api.github.com/repos/k0baya/new-api-freebsd/releases/latest" | grep -oP '"tag_name":\s*"\K[^"]+')
           bash compare.sh
           
       - name: Trigger release
@@ -24,7 +24,7 @@ jobs:
           script: |
               await github.rest.actions.createWorkflowDispatch({
               owner: 'k0baya',
-              repo: 'one-api-freebsd',
+              repo: 'new-api-freebsd',
               workflow_id: 'build.yml',
               ref: 'main'
               })

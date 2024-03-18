@@ -1,2 +1,2 @@
-# One-API-FreeBSD
-Automatically build One-API (FreeBSD version)
+# New-API-FreeBSD
+Automatically build New-API (FreeBSD version)
