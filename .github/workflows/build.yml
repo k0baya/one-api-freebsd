@@ -1,14 +1,14 @@
-name: Build new-api
+name: Build one-api
 
 on: workflow_dispatch
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: Build new-api
+    name: Build one-api
     steps:
     - uses: actions/checkout@v4
-    - name: Build new-api
+    - name: Build one-api
       uses: vmactions/freebsd-vm@v1
       with:
         usesh: true
@@ -18,26 +18,25 @@ jobs:
           wget https://dl.google.com/go/go1.22.0.freebsd-amd64.tar.gz && tar -C /usr/local -xzf go1.22.0.freebsd-amd64.tar.gz && rm go1.22.0.freebsd-amd64.tar.gz
           ln -s /usr/local/go/bin/go /usr/local/bin/go
         run: |
-          export LATEST_APP=$(wget -qO- https://api.github.com/repos/Calcium-Ion/new-api/tags | gawk -F '["v]' '/name/{print "v"$5;exit}')
-          git clone -b $LATEST_APP https://github.com/Calcium-Ion/new-api
-          cd new-api/web
-          npm install
+          export LATEST_APP=$(wget -qO- https://api.github.com/repos/songquanpeng/one-api/tags | gawk -F '["v]' '/name/{print "v"$5;exit}')
+          git clone -b $LATEST_APP https://github.com/songquanpeng/one-api
+          cd one-api/web
           git describe --tags > VERSION
-          REACT_APP_VERSION=$(git describe --tags) npm run build
+          REACT_APP_VERSION=$(git describe --tags) chmod u+x ./build.sh && ./build.sh
           cd ..
           go mod download
-          go build -ldflags "-s -w -X 'one-api/common.Version=$(git describe --tags)' -extldflags '-static'" -o new-api
+          go build -ldflags "-s -w -X 'github.com/songquanpeng/one-api/common.Version=$(git describe --tags)' -extldflags '-static'" -o one-api
           
     - name: Upload artifact
       uses: actions/upload-artifact@main
       with:
-        name: new-api-freebsd
+        name: one-api-freebsd
         path: |
-            new-api/new-api
+            one-api/one-api
 
     - name: Generate release tag
       id: tag
-      run: echo "release_tag=$(wget -qO- https://api.github.com/repos/Calcium-Ion/new-api/tags | gawk -F '["v]' '/name/{print "v"$5;exit}')" >> $GITHUB_OUTPUT
+      run: echo "release_tag=$(wget -qO- https://api.github.com/repos/songquanpeng/one-api/tags | gawk -F '["v]' '/name/{print "v"$5;exit}')" >> $GITHUB_OUTPUT
 
     - name: Create release
       uses: softprops/action-gh-release@v1
@@ -46,7 +45,7 @@ jobs:
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         files: |
-              new-api/new-api
+              one-api/one-api
               
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@v2
