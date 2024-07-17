@@ -8,22 +8,38 @@ jobs:
     name: Build one-api
     steps:
     - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+          node-version: 16
+          
+    - name: Clone Repo
+      run: |
+          export LATEST_APP=$(wget -qO- https://api.github.com/repos/songquanpeng/one-api/tags | gawk -F '["v]' '/name/{print "v"$5;exit}')
+          git clone -b $LATEST_APP https://github.com/songquanpeng/one-api
+
+    - name: Build Frontend
+      env:
+        CI: ""
+      run: |
+          cd one-api/web
+          git describe --tags > VERSION
+          REACT_APP_VERSION=$(git describe --tags) chmod u+x ./build.sh && ./build.sh
+          cd ../..
+
     - name: Build one-api
       uses: vmactions/freebsd-vm@v1
       with:
         usesh: true
         release: 13.2
         prepare: |
-          pkg install -y node18 npm-node18 wget curl git gcc bash gawk gsed
+          pkg install -y wget curl git gcc bash gawk gsed
           wget https://dl.google.com/go/go1.22.0.freebsd-amd64.tar.gz && tar -C /usr/local -xzf go1.22.0.freebsd-amd64.tar.gz && rm go1.22.0.freebsd-amd64.tar.gz
           ln -s /usr/local/go/bin/go /usr/local/bin/go
         run: |
-          export LATEST_APP=$(wget -qO- https://api.github.com/repos/songquanpeng/one-api/tags | gawk -F '["v]' '/v0/{print "v"$5;exit}')
-          git clone -b $LATEST_APP https://github.com/songquanpeng/one-api
-          cd one-api/web
-          git describe --tags > VERSION
-          REACT_APP_VERSION=$(git describe --tags) chmod u+x ./build.sh && ./build.sh
-          cd ..
+          git config --global --add safe.directory /home/runner/work/one-api-freebsd/one-api-freebsd/one-api
+          cd one-api
           go mod download
           go build -ldflags "-s -w -X 'github.com/songquanpeng/one-api/common.Version=$(git describe --tags)' -extldflags '-static'" -o one-api
           
