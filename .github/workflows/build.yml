@@ -52,7 +52,7 @@ jobs:
 
     - name: Generate release tag
       id: tag
-      run: echo "release_tag=$(wget -qO- https://api.github.com/repos/songquanpeng/one-api/tags | gawk -F '["v]' '/v0/{print "v"$5;exit}')" >> $GITHUB_OUTPUT
+      run: echo "release_tag=$(wget -qO- https://api.github.com/repos/songquanpeng/one-api/tags | jq -r '.[0].name')" >> $GITHUB_OUTPUT
 
     - name: Create release
       uses: softprops/action-gh-release@v1
