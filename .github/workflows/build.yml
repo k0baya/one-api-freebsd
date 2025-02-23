@@ -35,7 +35,7 @@ jobs:
         release: 13.2
         prepare: |
           pkg install -y wget curl git gcc bash gawk gsed
-          wget https://dl.google.com/go/go1.22.0.freebsd-amd64.tar.gz && tar -C /usr/local -xzf go1.22.0.freebsd-amd64.tar.gz && rm go1.22.0.freebsd-amd64.tar.gz
+          wget https://dl.google.com/go/go1.23.4.freebsd-amd64.tar.gz && tar -C /usr/local -xzf go1.23.4.freebsd-amd64.tar.gz && rm go1.23.4.freebsd-amd64.tar.gz
           ln -s /usr/local/go/bin/go /usr/local/bin/go
         run: |
           git config --global --add safe.directory /home/runner/work/one-api-freebsd/one-api-freebsd/one-api
