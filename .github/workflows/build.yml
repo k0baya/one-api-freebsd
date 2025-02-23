@@ -16,7 +16,7 @@ jobs:
           
     - name: Clone Repo
       run: |
-          export LATEST_APP=$(wget -qO- https://api.github.com/repos/songquanpeng/one-api/tags | gawk -F '["v]' '/v0/{print "v"$5;exit}')
+          export LATEST_APP=$(wget -qO- https://api.github.com/repos/songquanpeng/one-api/tags | jq -r '.[0].name')
           git clone -b $LATEST_APP https://github.com/songquanpeng/one-api
 
     - name: Build Frontend
